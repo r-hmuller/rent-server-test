@@ -20,9 +20,6 @@ class Machine
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
     private ?string $price = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $location = null;
-
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $ramQuantity = null;
 
@@ -37,6 +34,13 @@ class Machine
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $hardDiskSize = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $hardDiskTotalCapacityTb = null;
+
+    #[ORM\ManyToOne(inversedBy: 'machines')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Location $location = null;
 
     public function getId(): ?int
     {
@@ -65,22 +69,6 @@ class Machine
         $this->price = $price;
 
         return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getLocation(): ?string
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param string|null $location
-     */
-    public function setLocation(?string $location): void
-    {
-        $this->location = $location;
     }
 
     public function getRamQuantity(): ?int
@@ -141,5 +129,33 @@ class Machine
         $this->hardDiskSize = $hardDiskSize;
 
         return $this;
+    }
+
+    public function getLocation(): ?Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?Location $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getHardDiskTotalCapacityTb(): ?int
+    {
+        return $this->hardDiskTotalCapacityTb;
+    }
+
+    /**
+     * @param int|null $hardDiskTotalCapacityTb
+     */
+    public function setHardDiskTotalCapacityTb(?int $hardDiskTotalCapacityTb): void
+    {
+        $this->hardDiskTotalCapacityTb = $hardDiskTotalCapacityTb;
     }
 }
