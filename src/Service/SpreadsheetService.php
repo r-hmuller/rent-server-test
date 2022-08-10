@@ -29,8 +29,7 @@ class SpreadsheetService
         foreach ($lines as $line) {
             try {
                 $machine = $this->generateMachineEntity($line);
-                $this->logger->info("Price: ".$machine->getPrice());
-                $this->machineRepository->add($machine);
+                $this->machineRepository->add($machine, true);
             } catch (\Exception $e) {
                 $this->logger->error($e->getMessage());
                 $row = implode(",", $line);
@@ -72,7 +71,7 @@ class SpreadsheetService
         $ram = $this->generateRamData($row[1]);
         $hdd = $this->generateHddData($row[2]);
         $location = $row[3];
-        $price = filter_var($row[4], FILTER_SANITIZE_NUMBER_FLOAT);
+        $price = $this->generatePriceData($row[4]);
 
         $machine = new Machine();
         $machine->setName($model);
@@ -82,10 +81,25 @@ class SpreadsheetService
         $machine->setHardDiskSize($hdd['size']);
         $machine->setHardDiskType($hdd['type']);
         $machine->setHardDiskTotalCapacityTb($hdd['capacity']);
-        $machine->setPrice((string) $price);
+        $machine->setPrice((string) $price['value']);
+        $machine->setCurrency($price['currency']);
         $machine->setLocation($this->locationRepository->getOrCreateLocationByName($location));
 
         return $machine;
+    }
+
+    private function generatePriceData(string $priceInput):array
+    {
+        $price = [];
+        if (str_starts_with($priceInput, '$')) {
+            $price['currency'] = 'dollar';
+        } else if (str_starts_with($priceInput, '€')) {
+            $price['currency'] = 'euro';
+        } else if (str_starts_with($priceInput, 'S$')) {
+            $price['currency'] = 'Singapore dollar';
+        }
+        $price['value'] = filter_var($priceInput, FILTER_SANITIZE_NUMBER_FLOAT);
+        return $price;
     }
 
     /**
@@ -124,8 +138,8 @@ class SpreadsheetService
         $hddInfos['size'] = (int)$hddSizeExploded[1];
 
         $capacity = $hddInfos['quantity'] * $hddInfos['size'];
-        if ($separator === 'GB') {
-            $capacity = round($capacity / 1000, 2);
+        if ($separator === 'TB') {
+            $capacity = $capacity * 1000;
         }
 
         $hddInfos['capacity'] = $capacity;
