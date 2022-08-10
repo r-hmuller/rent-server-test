@@ -17,9 +17,6 @@ class Machine
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]
-    private ?string $price = null;
-
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $ramQuantity = null;
 
@@ -41,6 +38,12 @@ class Machine
     #[ORM\ManyToOne(inversedBy: 'machines')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Location $location = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    private ?string $price = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $currency = null;
 
     public function getId(): ?int
     {
@@ -157,5 +160,17 @@ class Machine
     public function setHardDiskTotalCapacityTb(?int $hardDiskTotalCapacityTb): void
     {
         $this->hardDiskTotalCapacityTb = $hardDiskTotalCapacityTb;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(string $currency): self
+    {
+        $this->currency = $currency;
+
+        return $this;
     }
 }

@@ -2,46 +2,56 @@
 
 namespace App\Service;
 
-use App\Entity\Location;
 use App\Entity\Machine;
 use App\Repository\LocationRepository;
-use Doctrine\Common\Cache\Psr6\InvalidArgument;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Repository\MachineRepository;
+use \PhpOffice\PhpSpreadsheet\IOFactory;
 use Psr\Log\LoggerInterface;
 
 class SpreadsheetService
 {
     private LoggerInterface $logger;
     private LocationRepository $locationRepository;
+    private MachineRepository $machineRepository;
+    private string $projectDir;
 
-    public function __construct(LoggerInterface $logger, LocationRepository $locationRepository)
+    public function __construct(LoggerInterface $logger, LocationRepository $locationRepository, MachineRepository $machineRepository, string $projectDir)
     {
         $this->logger = $logger;
         $this->locationRepository = $locationRepository;
+        $this->machineRepository = $machineRepository;
+        $this->projectDir = $projectDir;
     }
 
     public function storeOnDatabase():void
     {
         $lines = $this->readXlsFile('servers.xlsx');
         foreach ($lines as $line) {
-
+            try {
+                $machine = $this->generateMachineEntity($line);
+                $this->logger->info("Price: ".$machine->getPrice());
+                $this->machineRepository->add($machine);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                $row = implode(",", $line);
+                $this->logger->error("Exception {$e->getMessage()} occured when processing line \"$row\" ");
+            }
         }
     }
 
-    private function readXlsFile($fileName):array
+    public function readXlsFile($fileName):array
     {
         $lines = [];
-        $xlsFile = $this->getParameter('kernel.project_dir')."/public/$fileName";
-        $this->logger->info($xlsFile);
+        $xlsFile = "$this->projectDir/public/$fileName";
         $reader = IOFactory::createReader('Xlsx');
         $reader->setReadDataOnly(TRUE);
-        $spreadsheet = $reader->load("test.xlsx");
+        $spreadsheet = $reader->load($xlsFile);
 
         $worksheet = $spreadsheet->getActiveSheet();
 
         foreach ($worksheet->getRowIterator() as $row) {
             $cellIterator = $row->getCellIterator();
-            if ($row->getRowIndex() > 0) {
+            if ($row->getRowIndex() > 1) {
                 $line = [];
                 foreach ($cellIterator as $cell) {
                     $line[] = $cell->getValue();
@@ -52,7 +62,7 @@ class SpreadsheetService
         return $lines;
     }
 
-    private function generateMachineEntity($row):Machine
+    public function generateMachineEntity($row):Machine
     {
         if (count($row) < 4) {
             throw new \LogicException("The row must have 4 cells to be valid. Please check the entry");
@@ -90,7 +100,7 @@ class SpreadsheetService
     {
         $ramExploded = explode('GB', $ramInput);
         if (count($ramExploded) < 2) {
-            throw new \LogicException("Couldn't split the value. Please check the input");
+            throw new \LogicException("Couldn't split the value. Please check the RAM input: $ramInput");
         }
         return [
             'quantity' => $ramExploded[0],
@@ -103,7 +113,7 @@ class SpreadsheetService
         $separator = str_contains($rawInput, 'GB') ? 'GB' : 'TB';
         $hddExploded = explode($separator, $rawInput);
         if (count($hddExploded) < 2) {
-            throw new \LogicException("Couldn't split the value. Please check the input");
+            throw new \LogicException("Couldn't split the value. Please check the HDD input");
         }
         $hddInfos = [
             'type' => $hddExploded[1]

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220810002522 extends AbstractMigration
+final class Version20220810172546 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,12 @@ final class Version20220810002522 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE machine ADD hard_disk_total_capacity_tb SMALLINT NOT NULL');
+        $this->addSql('ALTER TABLE machine ADD currency VARCHAR(50) NOT NULL, CHANGE price price NUMERIC(10, 2) NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE machine DROP hard_disk_total_capacity_tb');
+        $this->addSql('ALTER TABLE machine DROP currency, CHANGE price price NUMERIC(7, 2) NOT NULL');
     }
 }
