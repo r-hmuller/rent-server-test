@@ -39,28 +39,26 @@ class MachineRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Machine[] Returns an array of Machine objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getByFilters(array $filters)
+    {
+        $qb = $this->createQueryBuilder('machines');
 
-//    public function findOneBySomeField($value): ?Machine
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        foreach($filters as $filter => $value) {
+            if ($filter === 'hardDiskType') {
+                $qb->andWhere("machines.$filter = :hddType");
+                $qb->setParameter('hddType', $value);
+            }
+            else if ($filter === 'location') {
+                $qb->innerJoin('machines.location', 'location', 'WITH', 'location.name = :location');
+                $qb->setParameter('location', $value);
+            }
+            else if ($filter === 'hardDiskCapacity') {
+                $qb->andWhere('$hardDiskTotalCapacityGb >= :hddCapacity');
+                $qb->setParameter('hddCapacity', $value);
+            }
+        }
+
+        $query = $qb->getQuery();
+        return $query->execute();
+    }
 }

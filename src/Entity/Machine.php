@@ -33,7 +33,7 @@ class Machine
     private ?int $hardDiskSize = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $hardDiskTotalCapacityTb = null;
+    private ?int $hardDiskTotalCapacityGb = null;
 
     #[ORM\ManyToOne(inversedBy: 'machines')]
     #[ORM\JoinColumn(nullable: false)]
@@ -149,17 +149,17 @@ class Machine
     /**
      * @return int|null
      */
-    public function getHardDiskTotalCapacityTb(): ?int
+    public function getHardDiskTotalCapacityGb(): ?int
     {
-        return $this->hardDiskTotalCapacityTb;
+        return $this->hardDiskTotalCapacityGb;
     }
 
     /**
-     * @param int|null $hardDiskTotalCapacityTb
+     * @param int|null $hardDiskTotalCapacityGb
      */
-    public function setHardDiskTotalCapacityTb(?int $hardDiskTotalCapacityTb): void
+    public function setHardDiskTotalCapacityGb(?int $hardDiskTotalCapacityGb): void
     {
-        $this->hardDiskTotalCapacityTb = $hardDiskTotalCapacityTb;
+        $this->hardDiskTotalCapacityGb = $hardDiskTotalCapacityGb;
     }
 
     public function getCurrency(): ?string
