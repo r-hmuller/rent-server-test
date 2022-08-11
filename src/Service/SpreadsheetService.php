@@ -80,7 +80,7 @@ class SpreadsheetService
         $machine->setHardDiskQuantity($hdd['quantity']);
         $machine->setHardDiskSize($hdd['size']);
         $machine->setHardDiskType($hdd['type']);
-        $machine->setHardDiskTotalCapacityTb($hdd['capacity']);
+        $machine->setHardDiskTotalCapacityGb($hdd['capacity']);
         $machine->setPrice((string) $price['value']);
         $machine->setCurrency($price['currency']);
         $machine->setLocation($this->locationRepository->getOrCreateLocationByName($location));
@@ -96,7 +96,7 @@ class SpreadsheetService
         } else if (str_starts_with($priceInput, '€')) {
             $price['currency'] = 'euro';
         } else if (str_starts_with($priceInput, 'S$')) {
-            $price['currency'] = 'Singapore dollar';
+            $price['currency'] = 'singapore dollar';
         }
         $price['value'] = filter_var($priceInput, FILTER_SANITIZE_NUMBER_FLOAT);
         return $price;
@@ -139,7 +139,8 @@ class SpreadsheetService
 
         $capacity = $hddInfos['quantity'] * $hddInfos['size'];
         if ($separator === 'TB') {
-            $capacity = $capacity * 1000;
+            $capacity *= 1000;
+            $hddInfos['size'] *= 1000;
         }
 
         $hddInfos['capacity'] = $capacity;

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MachineRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MachineRepository::class)]
 class Machine
@@ -12,37 +13,48 @@ class Machine
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("machine")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("machine")]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups("machine")]
     private ?int $ramQuantity = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups("machine")]
     private ?string $ramType = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups("machine")]
     private ?string $hardDiskType = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups("machine")]
     private ?int $hardDiskQuantity = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups("machine")]
     private ?int $hardDiskSize = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups("machine")]
     private ?int $hardDiskTotalCapacityGb = null;
 
     #[ORM\ManyToOne(inversedBy: 'machines')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("machine")]
     private ?Location $location = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups("machine")]
     private ?string $price = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups("machine")]
     private ?string $currency = null;
 
     public function getId(): ?int

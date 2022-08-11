@@ -6,6 +6,7 @@ use App\Repository\LocationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LocationRepository::class)]
 class Location
@@ -13,12 +14,15 @@ class Location
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("location-id")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("location")]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'location', targetEntity: Machine::class, orphanRemoval: true)]
+    #[Groups("location-machines")]
     private Collection $machines;
 
     public function __construct()

@@ -45,7 +45,7 @@ class MachineRepository extends ServiceEntityRepository
 
         foreach($filters as $filter => $value) {
             if ($filter === 'hardDiskType') {
-                $qb->andWhere("machines.$filter = :hddType");
+                $qb->andWhere("machines.hardDiskType = :hddType");
                 $qb->setParameter('hddType', $value);
             }
             else if ($filter === 'location') {
@@ -53,8 +53,11 @@ class MachineRepository extends ServiceEntityRepository
                 $qb->setParameter('location', $value);
             }
             else if ($filter === 'hardDiskCapacity') {
-                $qb->andWhere('$hardDiskTotalCapacityGb >= :hddCapacity');
+                $qb->andWhere('machines.hardDiskTotalCapacityGb >= :hddCapacity');
                 $qb->setParameter('hddCapacity', $value);
+            } else if ($filter === 'ram') {
+                $qb->andWhere('machines.ramQuantity IN (:ram)');
+                $qb->setParameter('ram', $value);
             }
         }
 
