@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ServerService;
+use App\Service\DatabaseServerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ServerController extends AbstractController
 {
     #[Route('/servers', name: 'server_list')]
-    public function list(Request $request, ServerService $serverService): JsonResponse
+    public function list(Request $request, DatabaseServerService $serverService): JsonResponse
     {
         $queryParams = $request->query->all();
         $servers = $serverService->getServersByFilters($queryParams);

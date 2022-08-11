@@ -38,6 +38,22 @@ class SpreadsheetService
         }
     }
 
+    public function getServersInMemory():array
+    {
+        $servers = [];
+        $lines = $this->readXlsFile('servers.xlsx');
+        foreach ($lines as $line) {
+            try {
+                 $servers[] = $this->generateMachineEntity($line);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                $row = implode(",", $line);
+                $this->logger->error("Exception {$e->getMessage()} occured when processing line \"$row\" ");
+            }
+        }
+        return $servers;
+    }
+
     public function readXlsFile($fileName):array
     {
         $lines = [];

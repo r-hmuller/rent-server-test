@@ -2,43 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\Machine;
-use App\Repository\MachineRepository;
-
-class ServerService
+abstract class ServerService
 {
-    private MachineRepository $machineRepository;
     private array $allowedFilters = ['ram', 'hardDiskCapacity', 'location', 'hardDiskType'];
 
-    public function __construct(MachineRepository $machineRepository)
-    {
-        $this->machineRepository = $machineRepository;
-    }
-
-    public function getServersByFilters(array $filters)
-    {
-        if (empty($filters)) {
-            return $this->machineRepository->findAll();
-        }
-
-        $sanitizedFilters = $this->sanitizeFilters($filters);
-        $entities = $this->machineRepository->getByFilters($sanitizedFilters);
-        $customJsonResponse = [];
-        foreach ($entities as $entity) {
-            $formattedEntity = [
-                'id' => $entity->getId(),
-                'name' => $entity->getName(),
-                'storage' => $entity->getHardDiskQuantity() .'X'. $entity->getHardDiskSize() . "-" . $entity->getHardDiskType(),
-                'ram' => $entity->getRamQuantity() . '' . $entity->getRamType(),
-                'location' => $entity->getLocation()->getName(),
-                'price' => $this->getCurrencySymbol($entity->getCurrency()) . ' ' . $entity->getPrice()
-            ];
-            $customJsonResponse[] = $formattedEntity;
-        }
-        return $customJsonResponse;
-    }
-
-    private function getCurrencySymbol (string $currency)
+    protected function getCurrencySymbol (string $currency)
     {
         return match ($currency) {
             'euro' => '€',
@@ -47,7 +15,7 @@ class ServerService
         };
     }
 
-    private function sanitizeFilters(array $filters)
+    protected function sanitizeFilters(array $filters)
     {
         $sanitizedFilters = [];
         foreach ($filters as $filter => $value) {
