@@ -31,7 +31,7 @@ class ServerService
                 'storage' => $entity->getHardDiskQuantity() .'X'. $entity->getHardDiskSize() . "-" . $entity->getHardDiskType(),
                 'ram' => $entity->getRamQuantity() . '' . $entity->getRamType(),
                 'location' => $entity->getLocation()->getName(),
-                'price' => $this->getCurrencySymbol($entity->getCurrency()) . '' . $entity->getPrice()
+                'price' => $this->getCurrencySymbol($entity->getCurrency()) . ' ' . $entity->getPrice()
             ];
             $customJsonResponse[] = $formattedEntity;
         }

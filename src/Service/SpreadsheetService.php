@@ -98,7 +98,7 @@ class SpreadsheetService
         } else if (str_starts_with($priceInput, 'S$')) {
             $price['currency'] = 'singapore dollar';
         }
-        $price['value'] = filter_var($priceInput, FILTER_SANITIZE_NUMBER_FLOAT);
+        $price['value'] = filter_var($priceInput, FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
         return $price;
     }
 
