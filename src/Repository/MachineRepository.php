@@ -44,20 +44,25 @@ class MachineRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('machines');
 
         foreach($filters as $filter => $value) {
-            if ($filter === 'hardDiskType') {
-                $qb->andWhere("machines.hardDiskType = :hddType");
-                $qb->setParameter('hddType', $value);
-            }
-            else if ($filter === 'location') {
-                $qb->innerJoin('machines.location', 'location', 'WITH', 'location.name = :location');
-                $qb->setParameter('location', $value);
-            }
-            else if ($filter === 'hardDiskCapacity') {
-                $qb->andWhere('machines.hardDiskTotalCapacityGb >= :hddCapacity');
-                $qb->setParameter('hddCapacity', $value);
-            } else if ($filter === 'ram') {
-                $qb->andWhere('machines.ramQuantity IN (:ram)');
-                $qb->setParameter('ram', $value);
+            switch ($filter) {
+                case 'hardDiskType':
+                    $qb->andWhere("machines.hardDiskType = :hddType");
+                    $qb->setParameter('hddType', $value);
+                    break;
+                case 'location':
+                    $qb->innerJoin('machines.location', 'location', 'WITH', 'location.name = :location');
+                    $qb->setParameter('location', $value);
+                    break;
+                case 'hardDiskCapacity':
+                    $qb->andWhere('machines.hardDiskTotalCapacityGb >= :hddCapacity');
+                    $qb->setParameter('hddCapacity', $value);
+                    break;
+                case 'ram':
+                    $qb->andWhere('machines.ramQuantity IN (:ram)');
+                    $qb->setParameter('ram', $value);
+                    break;
+                default:
+                    break;
             }
         }
 

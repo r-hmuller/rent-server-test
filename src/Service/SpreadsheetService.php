@@ -71,9 +71,10 @@ class SpreadsheetService
                 foreach ($cellIterator as $cell) {
                     $line[] = $cell->getValue();
                 }
-                $lines[] = $line;
+                if (!is_null($line[0])) $lines[] = $line;
             }
         }
+
         return $lines;
     }
 
