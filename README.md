@@ -32,3 +32,15 @@ For both routes you can pass the following filters:
 - hardDiskType: String (?hardDiskType=SSD)
 - hardDiskCapacity: String, in GB (to be simpler, 1tb = 1000gb) (?hardDiskCapacity=2000)
 
+# How to test it
+
+While running the docker-compose (to have the database up and running), you can,
+outside the container, run the following commands:
+
+`
+php bin/console --env=test doctrine:database:create
+
+php bin/console --env=test doctrine:schema:create
+
+php bin/phpunit 
+`
