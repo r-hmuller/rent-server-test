@@ -2,6 +2,12 @@
 
 namespace App\Service;
 
+/*
+ * I decided to use this as abstract class to allow using DatabaseServerService and InMemoryService at the same time.
+ * (As described on the README.md)
+ * Another option would be converting this abstract class to an Interface (and moving this logic to another place -
+ * maybe using Trait), and using the Dependency Injection to inject one of the services on the Controller.
+ */
 abstract class ServerService
 {
     private array $allowedFilters = ['ram', 'hardDiskCapacity', 'location', 'hardDiskType'];
