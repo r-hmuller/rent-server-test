@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\DatabaseServerService;
+use App\Service\InMemoryServerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,13 @@ class ServerController extends AbstractController
     {
         $queryParams = $request->query->all();
         $servers = $serverService->getServersByFilters($queryParams);
-        return $this->json($servers, 200);
+        return $this->json($servers);
+    }
+    #[Route('/servers-inmemory', name: 'server_list_in_memory')]
+    public function listInMemory(Request $request, InMemoryServerService $serverService): JsonResponse
+    {
+        $queryParams = $request->query->all();
+        $servers = $serverService->getServers($queryParams);
+        return $this->json($servers);
     }
 }

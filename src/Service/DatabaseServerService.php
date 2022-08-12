@@ -29,7 +29,7 @@ class DatabaseServerService extends ServerService
                 'id' => $entity->getId(),
                 'name' => $entity->getName(),
                 'storage' => $entity->getHardDiskQuantity() .'X'. $entity->getHardDiskSize() . "-" . $entity->getHardDiskType(),
-                'ram' => $entity->getRamQuantity() . '' . $entity->getRamType(),
+                'ram' => $entity->getRamQuantity() . 'GB' . $entity->getRamType(),
                 'location' => $entity->getLocation()->getName(),
                 'price' => $this->getCurrencySymbol($entity->getCurrency()) . ' ' . $entity->getPrice()
             ];

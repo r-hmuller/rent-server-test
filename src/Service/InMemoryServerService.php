@@ -23,10 +23,9 @@ class InMemoryServerService extends ServerService
         $customJsonResponse = [];
         foreach ($entities as $entity) {
             $formattedEntity = [
-                'id' => $entity->getId(),
                 'name' => $entity->getName(),
                 'storage' => $entity->getHardDiskQuantity() .'X'. $entity->getHardDiskSize() . "-" . $entity->getHardDiskType(),
-                'ram' => $entity->getRamQuantity() . '' . $entity->getRamType(),
+                'ram' => $entity->getRamQuantity() . 'GB' . $entity->getRamType(),
                 'location' => $entity->getLocation()->getName(),
                 'price' => $this->getCurrencySymbol($entity->getCurrency()) . ' ' . $entity->getPrice()
             ];
@@ -46,6 +45,9 @@ class InMemoryServerService extends ServerService
                         if ($entity->getLocation()->getName() !== $value) $isValid = false;
                         break;
                     case 'ram':
+                        if (is_string($value)) {
+                            $value = [$value];
+                        }
                         if (!in_array($entity->getRamQuantity(), $value)) $isValid = false;
                         break;
                     case 'hardDiskType':
